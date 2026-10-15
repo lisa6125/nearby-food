@@ -1,0 +1,73 @@
+:root {
+  --yellow: #f6c945;
+  --yellow-deep: #e2b000;
+  --ink: #1c1c1c;
+  --muted: #8d8d8d;
+  --chip: #f3f3f3;
+  --card: #ffffff;
+  --shadow: 0 12px 30px rgba(70, 50, 0, 0.12);
+  color: var(--ink);
+  background: var(--yellow);
+  font-family: Nunito, "Segoe UI", "Microsoft JhengHei", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--yellow);
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.map-pin-wrap {
+  background: transparent;
+  border: 0;
+}
+
+.map-pin {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+}
+
+.map-pin.is-active {
+  background: var(--yellow);
+  color: var(--ink);
+}
+
+.leaflet-container {
+  font-family: inherit;
+}
