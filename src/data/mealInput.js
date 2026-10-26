@@ -43,7 +43,15 @@ export function defaultMealDraft() {
     radius: 1000,
     tastes: ['辣'],
     text: '今天想吃辣，不想再吃便當',
+    exclusions: [],
+    lessPreferred: [],
+    confirmed: false,
   }
+}
+
+export function termList(value) {
+  if (!Array.isArray(value)) return []
+  return value.filter((item) => typeof item === 'string' && item)
 }
 
 export function loadMealDraft() {
@@ -54,7 +62,10 @@ export function loadMealDraft() {
     const draft = {
       ...fallback,
       ...saved,
-      tastes: saved.tastes || fallback.tastes,
+      tastes: Array.isArray(saved.tastes) ? termList(saved.tastes) : fallback.tastes,
+      exclusions: termList(saved.exclusions),
+      lessPreferred: termList(saved.lessPreferred),
+      confirmed: saved.confirmed === true,
       origin: mealOrigin(saved.origin),
     }
     if (draft.landmarkId !== CURRENT_LOCATION_ID || !draft.origin) {

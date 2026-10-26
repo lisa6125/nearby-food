@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const onMeal = computed(() =>
-  ['meal', 'location-unavailable', 'confirm'].includes(route.name),
+  ['meal', 'location-unavailable', 'suggest'].includes(route.name),
 )
 </script>
 

@@ -30,6 +30,7 @@ import {
   loadMealDraft,
   mealLandmarkName,
   saveMealDraft,
+  termList,
 } from '../data/mealInput'
 
 const router = useRouter()
@@ -75,6 +76,9 @@ function openLocationUnavailable() {
     radius: draft.radius,
     tastes: [...draft.tastes],
     text: draft.text.trim(),
+    exclusions: termList(draft.exclusions),
+    lessPreferred: termList(draft.lessPreferred),
+    confirmed: false,
   })
   router.push({ name: 'location-unavailable' })
 }
@@ -139,8 +143,11 @@ function submit() {
     radius: draft.radius,
     tastes: [...draft.tastes],
     text: draft.text.trim(),
+    exclusions: [],
+    lessPreferred: [],
+    confirmed: false,
   })
-  router.push({ name: 'confirm' })
+  router.push({ name: 'suggest' })
 }
 </script>
 

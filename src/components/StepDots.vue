@@ -17,8 +17,7 @@ const router = useRouter()
 
 const steps = [
   { title: '輸入', route: 'meal', skippable: false },
-  { title: '確認條件', route: 'confirm', skippable: false },
-  { title: '推薦', route: null, skippable: false },
+  { title: '推薦', route: 'suggest', skippable: false },
   { title: '決定', route: null, skippable: false },
   { title: '記錄', route: null, skippable: false },
 ]
