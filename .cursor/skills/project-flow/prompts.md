@@ -33,3 +33,12 @@
 ## 2026-10-26 17:05
 
 以上就是開發流程，幫我把動作回寫回 project-flow skill 內
+
+## 2026-10-26 17:10
+
+ @.cursor/onlyForMeDoc/正常流程開發進度.md:36-40 
+/project-flow @.cursor/onlyForMeDoc/正常流程前端開發.md:31-41 
+
+## 2026-10-26 17:17
+
+看過沒問題，繼續
