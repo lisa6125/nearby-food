@@ -1,88 +1,70 @@
 ---
 name: project-flow
 description: >-
-  依 SmartMeal MS04 為王奕淳產生前端 DevToDoList、在工作區 Vue 專案實作畫面，
-  並在使用者勾選完成後撰寫 API spec、更新任務狀態、建立分支。
-  使用者提到 DevToDoList、前端開發清單、王奕淳、D01、D03、D06、D07、API spec 或專案流程時使用。
+  記錄使用者 prompt，依正常流程開發進度實作下一個前端畫面。該項完成後核對勾選、提交程式、回填 SmartMeal_Doc、推送並開合併請求。
+  使用者提到 project-flow、開發流程、正常流程、開發進度、prompt 紀錄或回寫 skill 時使用。
 disable-model-invocation: true
 ---
 
 # 前端開發流程
 
-只處理王奕淳在 MS04 的前端工作，順序固定為 D01、D03、D06、D07。一次只做下一個未勾選項目。
+一輪只做一件事。開發輪只做一個進度項目。使用者說該項完成之後，下一輪做收尾，不接著做下一個畫面。
 
-## 路徑
+## 每次先記錄 prompt
 
-文件只讀寫 `SmartMeal_Doc/`。不要讀寫 `teamDoc/SmartMeal_Doc/`。
+套用這份 skill 時，先把使用者這一則訊息的原文追加到 [prompts.md](prompts.md) 最後面。沿用該檔的日期標題，不摘要、不改寫。這一輪的工作做完後，不要再改這一則原文。
+
+## 文件與程式放哪
+
+規格只讀寫 `SmartMeal_Doc/`。不要讀寫 `teamDoc/SmartMeal_Doc/`。不要改 Laravel 或 AI API。畫面只改工作區根目錄的 `src/`。
 
 | 用途 | 路徑 |
-|---|---|
-| 任務說明 | `SmartMeal_Doc/docs/00-專案/任務/MS04-任務說明.md` |
-| 任務狀態 | `SmartMeal_Doc/docs/00-專案/任務/任務認領.md` |
-| 規格預覽 | `.cursor/onlyForMeDoc/SmartMeal-spec_預覽_1022.pdf` |
-| 畫面實作 | 工作區根目錄的 Vue 專案，`src/` |
-| DevToDoList | `.cursor/onlyForMeDoc/DevToDoList.md` |
-| API spec | `.cursor/submitToBackend/<任務代號>-api-spec.md` |
+| --- | --- |
+| 前端範圍與使用者流程 | `.cursor/onlyForMeDoc/前端範圍與流程.md` |
+| 正常流程要做什麼、對哪張草稿 | `.cursor/onlyForMeDoc/正常流程前端開發.md` |
+| 做到哪裡 | `.cursor/onlyForMeDoc/正常流程開發進度.md` |
+| prompt 原文 | `.cursor/skills/project-flow/prompts.md` |
+| 合併請求範本 | `SmartMeal_Doc/.github/pull_request_template.md` |
 
-不要修改 `SmartMeal_Doc` 內的 Laravel 或 AI API 程式。不要把清單或 spec 寫回這個 `SKILL.md`。
+進度檔裡標成「稍後」的項目跳過。例外、回顧、個人設定、登入不在正常流程這一輪。
 
-## 步驟
+工作區根目錄的 git 忽略 `SmartMeal_Doc/` 與 `.cursor/*`。畫面程式在根目錄提交。文件在 `SmartMeal_Doc` 自己的儲存庫提交。進度檔不納入提交。
 
-### 1. 產生 DevToDoList
+## 開發輪
 
-`.cursor/onlyForMeDoc/DevToDoList.md` 已存在就跳過，直接做步驟 2。
+使用者還沒說這一項完成時，走這一輪。
 
-還沒有時，先讀規格預覽 PDF、`MS04-任務說明.md`，以及下表該任務的「先讀」。依 D01、D03、D06、D07 各寫一個 TODO，沿用下方範本。每個 TODO 都要連結到 `MS04-任務說明.md`；`任務認領.md` 已有 Issue 時，一併放上 Issue 連結。
+1. 讀進度檔，取下一個未勾選、且沒有標成稍後的項目。
+2. 對照開發檔裡同一個畫面的草稿與說明，只做那一項。
+3. 做完停下來。不要勾選進度檔，不要改上方表格的進度欄。
+4. 請使用者勾選。使用者勾選或明確說這一項完成之前，到此為止。
 
-| 任務 | 王奕淳要做的範圍 | 先讀 |
-|---|---|---|
-| D01 | 依架構第 3 節，在這台電腦啟動工作區前端並記錄結果。不實作 Laravel 與 AI API | `SmartMeal_Doc/docs/02-設計/架構.md` |
-| D03 | 路由、版面、可在樣本回應與後端之間切換的呼叫層、四類例外與 AI 標示的共用元件 | `SmartMeal_Doc/docs/02-設計/架構.md`、`SmartMeal_Doc/docs/02-設計/訊息與標示.md`、`SmartMeal_Doc/data/樣本回應/`、`SmartMeal_Doc/docs/01-需求/畫面草圖/` |
-| D06 | 登入到食用紀錄的第一條流程畫面，先接樣本回應 | `SmartMeal_Doc/docs/01-需求/使用流程.md`、`SmartMeal_Doc/docs/02-設計/訊息與標示.md`、`SmartMeal_Doc/data/樣本回應/`、`SmartMeal_Doc/docs/01-需求/畫面草圖/` |
-| D07 | 把已完成畫面接到真正的後端。只改前端接線 | `SmartMeal_Doc/docs/02-設計/介面契約/前端與後端.md`、`SmartMeal_Doc/docs/01-需求/使用流程.md` |
+## 完成後的收尾
 
-### 2. 實作下一個未勾選項目
+使用者已勾選該項，或明確說該項完成時，走這一輪。不要開始下一個未勾選項目。已經做過的步驟跳過，不要重做提交或再開一張合併請求。
 
-只改 `src/`。做完後停下來，請使用者在 DevToDoList 勾選。使用者勾選或明確說完成之前，不要寫 API spec、不要改 `任務認領.md`、不要開分支。
+1. 對照進度檔該畫面已勾的項目與 `src/`。沒做完的維持未勾，文件也不寫成完成。標成稍後的不補做。
+2. 在工作區根目錄提交這一項的程式。訊息一行，格式 `type: 訊息`。只含這一項的 `src/` 與直接相關設定。不推送根目錄，除非使用者這則明確說要推送。
+3. 依已完成的範圍回填 `SmartMeal_Doc/docs`，未完成的寫明尚未做：
+   - `docs/01-需求/畫面草圖/README.md`：該步驟的畫面欄加上實作路徑。狀態維持初稿，除非已經走查。
+   - 對應的 `docs/01-需求/FR-xx.md`：第 8 節前端位置，第 9 節變更紀錄。
+   - `docs/02-設計/追溯表.md`：只改前端位置。
+   - `docs/02-設計/架構.md` 第 4 節：寫目前做到哪一步。
+4. 在 `SmartMeal_Doc` 提交這次回填並推送目前分支。不要改提交到 `main`。訊息一行，格式 `docs: 依需求完成 <草稿編號> 並回填前端實作位置`。
+5. 對 `main` 開合併請求，內文照範本填。沒有對應 Issue 就不寫 `Closes`。
 
-### 3. 確認後收尾
+合併請求這樣填：
 
-使用者確認該項完成後，依序做這三件事：
+| 項目 | 內容 |
+| --- | --- |
+| 任務編號 | D06　第一條流程的畫面，並寫這次做到哪一步 |
+| FR 編號 | 這一步實際回填的 FR |
+| 分組與層 | 開發組／前端 |
 
-1. 依下方範本寫出 `.cursor/submitToBackend/<任務代號>-api-spec.md`。這一項沒有呼叫 API 時，在檔案開頭註明「此項無 API」，並只保留任務代號與畫面行為。
-2. `任務認領.md` 已有該任務列時，只把該列狀態改為「完成」，保留原任務代號與 Issue 連結。沒有該列時不要新增，也不要改 `MS04-任務說明.md`；改在 API spec 開頭註明任務代號，並告訴使用者文件裡還沒有可更新的列。
-3. 在工作區根目錄建立分支 `alice/spec-<任務代號>`，例如 `alice/spec-D03`。不要 commit、不要 push。工作區有未提交變更時，先告訴使用者，不要強制切換分支。
+做了什麼只寫已完成的範圍，未做的寫尚未做。介面契約沒改，只勾「沒有變動」。驗收條件沒有逐條達成，不要勾那一項。這次是文件、不影響 `main` 啟動、沒有混用樣本與販售資料、沒有金鑰或個人資料時，才勾後面三項。
 
-## DevToDoList 範本
+做完把合併請求網址給使用者，然後停下來。
 
-```markdown
-## [ ] D03 前端骨架
+## 回寫這份 skill
 
-- 任務說明：[MS04 D03](../../SmartMeal_Doc/docs/00-專案/任務/MS04-任務說明.md)
-- Issue：（有才寫）
-- 需求說明：
-- 完成定義：
-
-```mermaid
-flowchart LR
-    A[使用者操作] --> B[畫面結果]
-```
-```
-
-## API spec 範本
-
-```markdown
-# D03 API spec
-
-- 任務代號：D03
-- 對應文件：[MS04 任務說明](../../SmartMeal_Doc/docs/00-專案/任務/MS04-任務說明.md)
-- 畫面行為：
-
-## API-09 取得建議
-
-- 方法與路徑：
-- 請求：
-- 回應：
-- 樣本回應：`SmartMeal_Doc/data/樣本回應/` 內的檔名
-- 畫面如何使用這個回應：
-```
+使用者要求把流程回寫這份 skill 時，只改 `SKILL.md`。不改 `src/`、進度檔、`SmartMeal_Doc` 或既有 prompt 原文。改完告訴使用者改了哪幾段，然後停下來。
