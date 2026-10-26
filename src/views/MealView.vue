@@ -2,8 +2,10 @@
 import { Locate } from '@lucide/vue'
 import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import ConditionReviewDialog from '../components/ConditionReviewDialog.vue'
 import StepDots from '../components/StepDots.vue'
 import { requestUserLocation } from '../composables/useLocation'
+import { submitConditions } from '../data/conditionApi'
 import {
   Dialog,
   DialogContent,
@@ -36,6 +38,8 @@ import {
 const router = useRouter()
 const draft = reactive(loadMealDraft())
 const locating = ref(false)
+const reviewOpen = ref(false)
+const review = ref(null)
 const tasteOpen = ref(false)
 const tasteInput = ref('')
 const customTastes = ref(draft.tastes.filter((taste) => !TASTES.includes(taste)))
@@ -130,12 +134,8 @@ function onTextInput(event) {
   draft.text = event.target.value.slice(0, TEXT_LIMIT)
 }
 
-function submit() {
-  if (draft.landmarkId === CURRENT_LOCATION_ID && !draft.origin) {
-    openLocationUnavailable()
-    return
-  }
-  saveMealDraft({
+function draftRecord(extra = {}) {
+  return {
     landmarkId: draft.landmarkId,
     origin: draft.landmarkId === CURRENT_LOCATION_ID ? { ...draft.origin } : null,
     budget: draft.budget === '' || draft.budget === null ? null : Number(draft.budget),
@@ -143,10 +143,41 @@ function submit() {
     radius: draft.radius,
     tastes: [...draft.tastes],
     text: draft.text.trim(),
-    exclusions: [],
-    lessPreferred: [],
-    confirmed: false,
-  })
+    exclusions: extra.exclusions || [],
+    lessPreferred: extra.lessPreferred || [],
+    confirmed: extra.confirmed === true,
+  }
+}
+
+async function submit() {
+  if (draft.landmarkId === CURRENT_LOCATION_ID && !draft.origin) {
+    openLocationUnavailable()
+    return
+  }
+  const record = draftRecord()
+  saveMealDraft(record)
+  const response = await submitConditions(record)
+  if (!response.can_confirm) {
+    review.value = response
+    reviewOpen.value = true
+    return
+  }
+  router.push({ name: 'suggest' })
+}
+
+function clearConflictingSelection() {
+  draft.avoid = ''
+}
+
+function confirmReview(result) {
+  saveMealDraft(
+    draftRecord({
+      exclusions: result.exclusions,
+      lessPreferred: result.lessPreferred,
+      confirmed: true,
+    }),
+  )
+  reviewOpen.value = false
   router.push({ name: 'suggest' })
 }
 </script>
@@ -296,6 +327,12 @@ function submit() {
 
       <button type="submit" class="submit">整理條件</button>
     </form>
+    <ConditionReviewDialog
+      v-model:open="reviewOpen"
+      :response="review"
+      @clear-selection="clearConflictingSelection"
+      @confirm="confirmReview"
+    />
   </main>
 </template>
 
