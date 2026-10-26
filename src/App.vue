@@ -1,15 +1,37 @@
 <script setup>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { onMounted, ref, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import EatenPromptDialog from './components/EatenPromptDialog.vue'
+import { loadPendingMeal } from './data/eatenRecord'
 
 const route = useRoute()
+const router = useRouter()
+const pending = ref(null)
+const promptOpen = ref(false)
 const onMeal = computed(() =>
   ['meal', 'location-unavailable', 'suggest', 'accepted'].includes(route.name),
 )
+
+onMounted(() => {
+  pending.value = loadPendingMeal()
+  promptOpen.value = Boolean(pending.value)
+})
+
+function finishRecord() {
+  promptOpen.value = false
+  pending.value = null
+  router.push({ name: 'home' })
+}
 </script>
 
 <template>
   <router-view />
+  <EatenPromptDialog
+    v-if="pending"
+    v-model:open="promptOpen"
+    :pending="pending"
+    @submitted="finishRecord"
+  />
   <nav class="tabbar" aria-label="主要導覽">
     <router-link to="/" :class="{ on: route.name === 'home' }">首頁</router-link>
     <router-link

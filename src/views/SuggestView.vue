@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import StepDots from '../components/StepDots.vue'
 import { loadMealDraft, mealLandmarkName } from '../data/mealInput'
 import { loadSuggestions } from '../data/suggestionApi'
+import { saveAcceptedSelection } from '../data/eatenRecord'
 
 const router = useRouter()
 const draft = loadMealDraft()
@@ -55,6 +56,11 @@ function swap() {
 }
 
 function accept() {
+  saveAcceptedSelection({
+    suggestion: suggestion.value,
+    landmark,
+    draft,
+  })
   router.push({ name: 'accepted' })
 }
 </script>
