@@ -8,8 +8,8 @@ const route = useRoute()
   <router-view />
   <nav class="tabbar" aria-label="主要導覽">
     <router-link to="/" :class="{ on: route.name === 'home' }">首頁</router-link>
-    <router-link to="/search" :class="{ on: route.name === 'search' }">搜尋</router-link>
-    <router-link to="/random" :class="{ on: route.name === 'random' }">隨機</router-link>
+    <router-link to="/meal" :class="{ on: route.name === 'meal' }">選餐</router-link>
+    <router-link to="/review" :class="{ on: route.name === 'review' }">回顧</router-link>
   </nav>
 </template>
 

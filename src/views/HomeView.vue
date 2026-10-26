@@ -1,10 +1,10 @@
 <script setup>
-import { useRouter } from 'vue-router'
-import { preferenceRecords } from '../data/mock'
-import { useLocation } from '../composables/useLocation'
+import { useRouter } from 'vue-router';
+import { preferenceRecords } from '../data/mock';
+import { useLocation } from '../composables/useLocation';
 
-const router = useRouter()
-const { position, status, locate } = useLocation()
+const router = useRouter();
+const { position, status, locate } = useLocation();
 
 const statusText = {
   idle: '準備定位',
@@ -12,17 +12,17 @@ const statusText = {
   ready: '已使用目前位置',
   denied: '無法定位，改用台北市信義區',
   unsupported: '這台裝置沒有定位，改用台北市信義區',
-}
+};
 
 function openRecord(record) {
-  router.push({ name: 'search', query: { pref: record.id } })
+  router.push({ name: 'search', query: { pref: record.id } });
 }
 </script>
 
 <template>
   <main class="home">
     <header class="hero">
-      <p class="brand">覓食</p>
+      <p class="brand">SmartMeal</p>
       <h1>附近吃什麼</h1>
       <p class="lead">先找餐廳，也把你說過的口味記下來。</p>
       <p class="location">
@@ -34,12 +34,20 @@ function openRecord(record) {
 
     <section class="sheet">
       <div class="actions">
-        <button type="button" class="action" @click="router.push({ name: 'search' })">
+        <button
+          type="button"
+          class="action"
+          @click="router.push({ name: 'search' })"
+        >
           <span class="kicker">搜尋</span>
           <strong>進入搜索頁</strong>
           <span>清單、分類與地圖</span>
         </button>
-        <button type="button" class="action dark" @click="router.push({ name: 'random' })">
+        <button
+          type="button"
+          class="action dark"
+          @click="router.push({ name: 'random' })"
+        >
           <span class="kicker">隨機</span>
           <strong>附近擲五家</strong>
           <span>骰子選出五筆餐廳</span>
