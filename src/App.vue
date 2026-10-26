@@ -1,7 +1,11 @@
 <script setup>
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
+const onMeal = computed(() =>
+  ['meal', 'location-unavailable', 'confirm'].includes(route.name),
+)
 </script>
 
 <template>
@@ -10,8 +14,8 @@ const route = useRoute()
     <router-link to="/" :class="{ on: route.name === 'home' }">首頁</router-link>
     <router-link
       to="/meal"
-      :class="{ on: route.name === 'meal' || route.name === 'confirm' }"
-      :aria-current="route.name === 'meal' || route.name === 'confirm' ? 'page' : undefined"
+      :class="{ on: onMeal }"
+      :aria-current="onMeal ? 'page' : undefined"
     >
       選餐
     </router-link>

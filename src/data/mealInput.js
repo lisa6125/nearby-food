@@ -1,6 +1,6 @@
 export const LANDMARKS = [
-  { id: 'park17', name: 'Park17 南科商場' },
-  { id: 'xinshi', name: '新市' },
+  { id: 'park17', name: 'Park17 南科商場', description: '南科三路 17 號一帶' },
+  { id: 'xinshi', name: '新市', description: '民生路 2 號一帶' },
 ]
 
 export const CURRENT_LOCATION_ID = 'current'

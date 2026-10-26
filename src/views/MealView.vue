@@ -35,7 +35,6 @@ import {
 const router = useRouter()
 const draft = reactive(loadMealDraft())
 const locating = ref(false)
-const locateError = ref('')
 const tasteOpen = ref(false)
 const tasteInput = ref('')
 const customTastes = ref(draft.tastes.filter((taste) => !TASTES.includes(taste)))
@@ -61,20 +60,33 @@ const avoidValue = computed({
 function selectLandmark(id) {
   draft.landmarkId = id
   draft.origin = null
-  locateError.value = ''
+}
+
+function openLocationUnavailable() {
+  draft.origin = null
+  if (!LANDMARKS.some((item) => item.id === draft.landmarkId)) {
+    draft.landmarkId = LANDMARKS[0].id
+  }
+  saveMealDraft({
+    landmarkId: draft.landmarkId,
+    origin: null,
+    budget: draft.budget === '' || draft.budget === null ? null : Number(draft.budget),
+    avoid: draft.avoid || null,
+    radius: draft.radius,
+    tastes: [...draft.tastes],
+    text: draft.text.trim(),
+  })
+  router.push({ name: 'location-unavailable' })
 }
 
 async function useCurrentLocation() {
   if (locating.value) return
-  locateError.value = ''
   locating.value = true
   try {
     draft.origin = await requestUserLocation()
     draft.landmarkId = CURRENT_LOCATION_ID
   } catch {
-    draft.origin = null
-    if (draft.landmarkId === CURRENT_LOCATION_ID) draft.landmarkId = LANDMARKS[0].id
-    locateError.value = '無法取得目前的位置，可以從清單選擇一個地標。'
+    openLocationUnavailable()
   } finally {
     locating.value = false
   }
@@ -116,7 +128,7 @@ function onTextInput(event) {
 
 function submit() {
   if (draft.landmarkId === CURRENT_LOCATION_ID && !draft.origin) {
-    locateError.value = '無法取得目前的位置，可以從清單選擇一個地標。'
+    openLocationUnavailable()
     return
   }
   saveMealDraft({
@@ -166,7 +178,6 @@ function submit() {
           <Locate :size="16" aria-hidden="true" />
           {{ locating ? '定位中' : '目前位置' }}
         </button>
-        <p v-if="locateError" class="note warn">{{ locateError }}</p>
         <p class="note">距離從 {{ landmarkName }} 計算。上次選的地標會先帶出來。</p>
       </section>
 
@@ -412,10 +423,6 @@ h2 {
   font-size: 13px;
   font-weight: 700;
   line-height: 1.5;
-}
-
-.note.warn {
-  color: #1c1c1c;
 }
 
 .locate:disabled {
