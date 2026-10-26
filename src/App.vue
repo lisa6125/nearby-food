@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, onUnmounted, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import EatenPromptDialog from './components/EatenPromptDialog.vue'
 import { loadPendingMeal } from './data/eatenRecord'
@@ -11,10 +11,41 @@ const promptOpen = ref(false)
 const onMeal = computed(() =>
   ['meal', 'location-unavailable', 'suggest', 'accepted'].includes(route.name),
 )
+let leftAfterNav = false
+
+function showPendingPrompt() {
+  const next = loadPendingMeal()
+  if (!next) return
+  pending.value = next
+  promptOpen.value = true
+}
+
+function markLeft() {
+  if (loadPendingMeal()) leftAfterNav = true
+}
+
+function promptIfReturned() {
+  if (!leftAfterNav || document.visibilityState === 'hidden') return
+  leftAfterNav = false
+  showPendingPrompt()
+}
+
+function onVisibility() {
+  if (document.visibilityState === 'hidden') markLeft()
+  else promptIfReturned()
+}
 
 onMounted(() => {
-  pending.value = loadPendingMeal()
-  promptOpen.value = Boolean(pending.value)
+  showPendingPrompt()
+  document.addEventListener('visibilitychange', onVisibility)
+  window.addEventListener('blur', markLeft)
+  window.addEventListener('focus', promptIfReturned)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('visibilitychange', onVisibility)
+  window.removeEventListener('blur', markLeft)
+  window.removeEventListener('focus', promptIfReturned)
 })
 
 function finishRecord() {

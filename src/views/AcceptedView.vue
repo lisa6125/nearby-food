@@ -38,7 +38,7 @@ function openMaps() {
         <button type="button" class="nav" @click="openMaps">開啟導航</button>
         <p class="fine">實際販售情形與價格以門市現場為準。</p>
       </article>
-      <p v-if="remembered" class="later">已記住。下次打開會問你吃完了嗎。</p>
+      <p v-if="remembered" class="later">已記住。離開後回來會問你吃完了嗎。</p>
     </section>
 
     <section v-else class="sheet">
